@@ -2,6 +2,11 @@
 
 Java UI Component Extension
 
+### Dependencies
+
+- LWJGL https://www.lwjgl.org/
+- JOML https://github.com/JOML-CI/JOML
+
 ### Building (on Windows)
 
 This assumes you have a terminal window open in the working directory. Adjust as necessary.
