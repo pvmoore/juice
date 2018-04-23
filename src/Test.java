@@ -1,7 +1,10 @@
 import juice.Camera2D;
 import juice.Frame;
+import juice.Texture;
 import juice.Window;
+import juice.components.Sprite;
 import juice.components.UIComponent;
+import juice.types.Int2;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 
@@ -50,10 +53,19 @@ public class Test {
     class MainComponent extends UIComponent {
         private Camera2D camera2d;
         private Window window;
+        private Sprite sprite;
 
         MainComponent(Window w) {
             this.window = w;
             this.camera2d = new Camera2D(w.getWindowSize());
+            this.sprite = new Sprite()
+                .setVP(camera2d.VP())
+                .setTexture(Texture.get("bishop-256.png"));
+
+            sprite.setSize(new Int2(256,256));
+            sprite.setRelPos(new Int2(10,10));
+
+            add(sprite);
         }
 
         @Override public void update(Frame frame) {
