@@ -13,8 +13,8 @@ final public class DragComponent {
     private boolean isEnabled = true;
 
     public interface Listener {
-        void onMoved(Int2 delta);
-        void onDropped(Int2 delta);
+        void onDragMoved(Int2 delta);
+        void onDragDropped(Int2 delta);
     }
 
     public DragComponent(Listener listener) {
@@ -36,13 +36,13 @@ final public class DragComponent {
         if(currentlyDragging) {
             if(lastDragPos != state.pos) {
                 lastDragPos = state.pos;
-                listener.onMoved(state.pos.sub(state.drag.start));
+                listener.onDragMoved(state.pos.sub(state.drag.start));
                 moved = true;
             }
             if(!nowDragging) {
                 if(moved) {
                     // Only inform the listener if anything was actually dragged
-                    listener.onDropped(lastDragPos.sub(state.drag.start));
+                    listener.onDragDropped(lastDragPos.sub(state.drag.start));
                 }
                 lastDragPos = Int2.ZERO;
                 currentlyDragging = false;

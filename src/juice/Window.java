@@ -245,7 +245,7 @@ final public class Window {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glViewport(0, 0, props.width, props.height);
 
-        stage.setPos(Int2.ZERO);
+        stage.setRelPos(Int2.ZERO);
         stage.setSize(getWindowSize());
     }
     public void close() {

@@ -72,7 +72,7 @@ public class Sprite extends UIComponent {
 
         if(modelMatrixChanged) {
             modelMatrixChanged = false;
-            var p = getPos();
+            var p = getAbsPos();
             var s = getSize();
 
             translation.translation(p.getX(), p.getY(), 0f);

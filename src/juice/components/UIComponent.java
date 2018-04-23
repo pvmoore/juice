@@ -1,23 +1,27 @@
 package juice.components;
 
 import juice.Frame;
+import juice.Lambda;
 import juice.types.Int2;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class UIComponent {
-    protected Int2 pos  = Int2.ZERO;
-    protected Int2 size = Int2.ZERO;
-    protected List<UIComponent> children = new ArrayList<>();
-    protected UIComponent parent;
+    private Int2 pos  = Int2.ZERO;
+    private Int2 size = Int2.ZERO;
+    private List<UIComponent> children = new ArrayList<>();
+    private UIComponent parent;
     //====================================================================
     /** Returns the sum of all relative positions. */
-    public Int2 getPos() {
+    public Int2 getAbsPos() {
         if(parent==null) return pos;
-        return pos.add(parent.getPos());
+        return pos.add(parent.getAbsPos());
     }
-    public void setPos(Int2 p) {
+    public Int2 getRelPos() {
+        return pos;
+    }
+    public void setRelPos(Int2 p) {
         boolean changed = p!=pos;
         pos = p;
         if(changed) onMoved();
@@ -30,8 +34,17 @@ public class UIComponent {
         size = s;
         if(changed) onResized();
     }
+    public UIComponent getParent() {
+        return parent;
+    }
+    public List<UIComponent> getChildren() {
+        return children;
+    }
+    public int countChildren(Lambda.AR<UIComponent,Boolean> f) {
+        return (int)children.stream().filter(f::call).count();
+    }
     public boolean enclosesPoint(Int2 p) {
-        var pos    = getPos();
+        var pos    = getAbsPos();
         var extent = pos.add(getSize());
         return p.getX() >= pos.getX()   && p.getY() >= pos.getY() &&
                p.getX() < extent.getX() && p.getY() < extent.getY();
@@ -44,14 +57,27 @@ public class UIComponent {
     }
     //====================================================================
     public void add(UIComponent child) {
+        if(child.parent!=null) {
+            if(child.parent==this) {
+                // Child is already a child of this parent
+                return;
+            }
+            // Detach first
+            child.detach();
+        }
         child.parent = this;
         children.add(child);
+
+        // Call events
         child.onAdded();
+        onChildAdded(child);
     }
     public void remove(UIComponent child) {
         child.parent = null;
         if(children.remove(child)) {
+            // Call events of child was actually removed
             child.onRemoved();
+            onChildRemoved(child);
         }
     }
     public boolean isAttached() {
@@ -76,21 +102,8 @@ public class UIComponent {
             c.render(frame);
         }
     }
-//    public void mouseButton(int button, Window.MouseState state) {
-//        for(var c : children) {
-//            c.mouseButton(button, state);
-//        }
-//    }
-//    public void mouseMoved(Window.MouseState state) {
-//        for(var c : children) {
-//            c.mouseMoved(state);
-//        }
-//    }
-//    public void mouseDragEnd(Window.MouseDrag drag) {
-//        for(var c : children) {
-//            c.mouseDragEnd(drag);
-//        }
-//    }
+    //====================================================================
+    // Child events
     //====================================================================
     public void onAdded() {
         // override this if you need to do things after you are added
@@ -103,6 +116,15 @@ public class UIComponent {
     }
     public void onResized() {
         // override if you are interested in size events
+    }
+    //====================================================================
+    // Parent events
+    //====================================================================
+    public void onChildAdded(UIComponent child) {
+
+    }
+    public void onChildRemoved(UIComponent child) {
+
     }
     //====================================================================
     @Override public String toString() {

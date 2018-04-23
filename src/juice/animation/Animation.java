@@ -71,6 +71,7 @@ final public class Animation {
         if(framesPassed>0) {
             lastFrame = (int)currentFrame;
             double[] values = easing.get(currentFrame-previousKey.frame);
+
             if(currentKey.frameCallback!=null) {
                 currentKey.frameCallback.call(lastFrame, values);
             }
