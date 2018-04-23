@@ -1,6 +1,6 @@
 # JUICE
 
-Java UI Component Extension
+Java UI Component Engine
 
 ### Dependencies
 
