@@ -34,20 +34,25 @@ final public class Animations {
         animations.values().forEach(Animation::resume);
     }
     public void update(double speedDelta) {
-        // Update animations
-        animations.forEach((id, animation) -> {
-            if(animation.update(speedDelta)) toBeRemoved.add(id);
-        });
-
-        // Remove any that have finished or been removed
+        // Remove any that have been removed
         toBeRemoved.forEach(it->
             animations.remove(it)
         );
         toBeRemoved.clear();
 
-
-        // Add pending animations now so that there is no concurrent modification
+        // Add pending animations now
         animations.putAll(toBeAdded);
         toBeAdded.clear();
+
+        // Update animations
+        animations.forEach((id, animation) -> {
+            if(animation.update(speedDelta)) toBeRemoved.add(id);
+        });
+
+        // Remove any that have finished
+        toBeRemoved.forEach(it->
+            animations.remove(it)
+        );
+        toBeRemoved.clear();
     }
 }
