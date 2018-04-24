@@ -1,28 +1,31 @@
 package juice.animation;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 final public class Animations {
     private static int ids = 0;
     private Map<String,Animation> animations = new HashMap<>();
+    private Map<String, Animation> toBeAdded = new HashMap<>();
+    private Set<String> toBeRemoved = new HashSet<>();
     //=========================================================================
     public Animations add(String id, Animation a, boolean start) {
-        animations.put(id, a);
+        toBeAdded.put(id, a);
         if(start) a.start();
         return this;
     }
     public Animations add(Animation a, boolean start) {
-        animations.put("__"+ids++, a);
+        toBeAdded.put("__"+ids++, a);
         if(start) a.start();
         return this;
     }
     public void remove(String id) {
-        animations.remove(id);
+        toBeRemoved.add(id);
     }
     public void removeAll() {
-        animations.clear();
+        toBeRemoved.addAll(animations.keySet());
     }
     public void pauseAll() {
         animations.values().forEach(Animation::pause);
@@ -31,14 +34,20 @@ final public class Animations {
         animations.values().forEach(Animation::resume);
     }
     public void update(double speedDelta) {
-        var removeList = new ArrayList<String>();
-
+        // Update animations
         animations.forEach((id, animation) -> {
-            if(animation.update(speedDelta)) removeList.add(id);
+            if(animation.update(speedDelta)) toBeRemoved.add(id);
         });
 
-        removeList.forEach(it->
+        // Remove any that have finished or been removed
+        toBeRemoved.forEach(it->
             animations.remove(it)
         );
+        toBeRemoved.clear();
+
+
+        // Add pending animations now so that there is no concurrent modification
+        animations.putAll(toBeAdded);
+        toBeAdded.clear();
     }
 }
