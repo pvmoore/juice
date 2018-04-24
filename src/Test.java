@@ -60,7 +60,7 @@ public class Test {
             this.camera2d = new Camera2D(w.getWindowSize());
             this.sprite = new Sprite()
                 .setVP(camera2d.VP())
-                .setTexture(Texture.get("bishop-256.png"));
+                .setTexture(Texture.get("bishop-256.png", Texture.standardAttribs));
 
             sprite.setSize(new Int2(256,256));
             sprite.setRelPos(new Int2(10,10));

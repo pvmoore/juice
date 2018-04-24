@@ -102,7 +102,7 @@ final public class Font {
     private static Font load(String name) {
         Font f    = new Font();
         f.name    = name;
-        f.texture = Texture.get(directory, name+".png");
+        f.texture = Texture.get(directory, name+".png", Texture.standardAttribs);
         f.page    = readPage(f, name);
         return f;
     }
