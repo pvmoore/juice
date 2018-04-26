@@ -3,6 +3,7 @@ package juice;
 import juice.Lambda.AAR;
 import juice.Lambda.AR;
 import juice.types.Float2;
+import juice.types.Int2;
 import juice.types.Rect;
 
 import java.io.BufferedReader;
@@ -20,10 +21,14 @@ final public class Font {
         return String.format("[Font %s size: %d width:%d height:%d chars:%d kernings:%d]",
                              name, size, width, height, page.chars.size(), page.kernings.size());
     }
-    Float2 getDimension(String text, float size) {
+    public Int2 centreText(String text, float size, Int2 mid) {
+        var x = (int)getDimension(text, size).getX() / 2;
+        return new Int2(mid.getX()-x, mid.getY());
+    }
+    public Float2 getDimension(String text, float size) {
         return getRect(text, size).floatDimension();
     }
-    Rect<Float> getRect(String text, float size) {
+    public Rect<Float> getRect(String text, float size) {
         var r = new Rect<>(0f,0f,0f,0f);
         if(text.length() == 0) return r;
         r.x = 1000f;

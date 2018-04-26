@@ -1,6 +1,5 @@
 package juice.renderers;
 
-import juice.Frame;
 import juice.GLShaderProgram;
 import juice.VAO;
 import juice.VBO;
@@ -93,7 +92,7 @@ final public class RectangleRenderer {
         verticesChanged = true;
         return this;
     }
-    public void render(Frame frame) {
+    public void render() {
         if(rectangles.size()==0) return;
         vao.bind();
         prog.use();

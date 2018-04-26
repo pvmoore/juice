@@ -4,6 +4,7 @@ import juice.Font;
 import juice.GLShaderProgram;
 import juice.VAO;
 import juice.VBO;
+import juice.types.Int2;
 import juice.types.RGBA;
 import org.joml.Matrix4f;
 
@@ -33,7 +34,7 @@ final public class TextRenderer {
 
     private static final class Chunk {
         String text;
-        int x, y;
+        Int2 pos;
         RGBA colour;
         float size;
     }
@@ -73,13 +74,12 @@ final public class TextRenderer {
         this.size = size;
         return this;
     }
-    public TextRenderer appendText(String text, int x, int y) {
-        var ch = new Chunk();
-        ch.text = text;
-        ch.x = x;
-        ch.y = y;
+    public TextRenderer appendText(String text, Int2 pos) {
+        var ch    = new Chunk();
+        ch.text   = text;
+        ch.pos    = pos;
         ch.colour = colour;
-        ch.size = size;
+        ch.size   = size;
         chunks.add(ch);
         textChanged = true;
         return this;
@@ -139,8 +139,8 @@ final public class TextRenderer {
         buffer.position(0);
         chunks.forEach(chunk -> {
 
-            float X  = (float)chunk.x;
-            float Y  = (float)chunk.y;
+            float X  = (float)chunk.pos.getX();
+            float Y  = (float)chunk.pos.getY();
             int i    = 0;
 
             for(var c : chunk.text.toCharArray()) {

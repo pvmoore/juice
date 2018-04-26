@@ -133,8 +133,8 @@ public class Test {
 
             super.render(frame);
 
-            rectangles.render(frame);
-            roundRectangles.render(frame);
+            rectangles.render();
+            roundRectangles.render();
         }
     }
 }

@@ -10,6 +10,10 @@ final public class Float2 {
         this.x = x;
         this.y = y;
     }
+    public Float2(Int2 i) {
+        this.x = i.getX();
+        this.y = i.getY();
+    }
 
     public float getX() { return x; }
     public float getY() { return y; }
