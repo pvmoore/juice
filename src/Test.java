@@ -89,10 +89,20 @@ public class Test {
 
             roundRectangles = new RoundRectangleRenderer()
                 .setVP(camera2d.VP())
+                // Flag
                 .addRectangle(new RoundRectangleRenderer.Rectangle(
                     new Int2(430, 10), new Int2(100,100),
                     RGBA.WHITE, RGBA.WHITE, RGBA.WHITE, RGBA.RED,
                     0, 0, 10, 40
+                ))
+                // White border
+                .addRectangle(new RoundRectangleRenderer.Rectangle(
+                    new Int2(550, 10), new Int2(100,100),
+                    RGBA.WHITE, 32
+                ))
+                .addRectangle(new RoundRectangleRenderer.Rectangle(
+                    new Int2(555, 15), new Int2(90,90),
+                    RGBA.BLUE.blend(RGBA.RED), 30
                 ));
 
             add(sprite);

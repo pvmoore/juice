@@ -20,6 +20,9 @@ final public class RGBA {
     public RGBA gamma(float f) {
         return new RGBA(r*f, g*f, b*f, a);
     }
+    public RGBA blend(RGBA o) {
+        return new RGBA((r+o.r)/2, (g+o.g)/2, (b+o.b)/2, (a+o.a)/2);
+    }
     public RGBA red(float r) {
         return new RGBA(r,g,b,a);
     }
