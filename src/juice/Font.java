@@ -65,12 +65,12 @@ final public class Font {
         Map<Integer,Char> chars     = new HashMap<>();
         Map<Long, Integer> kernings = new HashMap<>(); /// key = (from<<32 | to)
 
-        int getKerning(int from, int to) {
+        public int getKerning(int from, int to) {
             var k = kernings.get(((long)from) << 32 | to);
             if(k == null) k = 0;
             return k;
         }
-        Char getChar(int ch) {
+        public Char getChar(int ch) {
             var c = chars.get(ch);
             if(c==null) c = chars.get(' ');
             return c;

@@ -1,5 +1,7 @@
 package juice;
 
+import juice.types.Int2;
+import juice.types.RGBA;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -67,5 +69,18 @@ final public class Util {
             b.append((char)buf.get(i));
         }
         return b.toString();
+    }
+    public static void putFloats(ByteBuffer buf, float f1) {
+        buf.putFloat(f1);
+    }
+    public static void putFloats(ByteBuffer buf, Int2 p) {
+        buf.putFloat(p.getX());
+        buf.putFloat(p.getY());
+    }
+    public static void putFloats(ByteBuffer buf, RGBA f) {
+        buf.putFloat(f.r);
+        buf.putFloat(f.g);
+        buf.putFloat(f.b);
+        buf.putFloat(f.a);
     }
 }

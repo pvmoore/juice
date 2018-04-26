@@ -80,10 +80,6 @@ public class Sprite extends UIComponent {
 
             var world = translation.mul(scale);
 
-//            System.out.println("trans = "+translation);
-//            System.out.println("scale = "+scale);
-//            System.out.println("world = "+world);
-
             prog.use().setUniform("MODEL", world);
         }
     }

@@ -20,6 +20,18 @@ final public class RGBA {
     public RGBA gamma(float f) {
         return new RGBA(r*f, g*f, b*f, a);
     }
+    public RGBA red(float r) {
+        return new RGBA(r,g,b,a);
+    }
+    public RGBA green(float g) {
+        return new RGBA(r,g,b,a);
+    }
+    public RGBA blue(float b) {
+        return new RGBA(r,g,b,a);
+    }
+    public RGBA alpha(float a) {
+        return new RGBA(r,g,b,a);
+    }
     public Vector4f toVector4f() {
         return new Vector4f(r,g,b,a);
     }

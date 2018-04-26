@@ -13,6 +13,9 @@ final public class Lambda {
     public interface RThrows <R> {
         R call() throws Exception;
     }
+    public interface A <A1> {
+        void call(A1 a1);
+    }
     public interface AR <A1,R> {
         R call(A1 a1);
     }
