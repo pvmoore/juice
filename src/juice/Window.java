@@ -13,9 +13,7 @@ import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.system.Callback;
 
 import java.nio.IntBuffer;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -31,7 +29,7 @@ final public class Window {
     private Callback debugProc;
     private long window;
     private Set<Integer> keys = new HashSet<>();
-    private Stage stage = new Stage();
+    private Stage stage;
     private Props props = new Props();
     private MouseState mouseState = new MouseState();
     //====================================================================
@@ -40,7 +38,7 @@ final public class Window {
         public boolean vsync     = true;
         public int width         = 400;
         public int height        = 400;
-        public String title      = "Change me";
+        public String title      = "Juice Application";
         public String textureDir = "./";
         public String fontDir    = "./";
     }
@@ -56,9 +54,6 @@ final public class Window {
                 if(!mouseState.button[mouseState.drag.button]) {
                     mouseState.drag.dragging = false;
                     mouseState.drag.end = pos;
-//                    if(mouseState.drag.start != pos) {
-//                        stage.mouseDragEnd(mouseState.drag);
-//                    }
                 }
             } else { // not currently dragging
                 if(mouseState.button[button]) {
@@ -89,10 +84,12 @@ final public class Window {
 
         public void resetWheelDelta() { wheelDelta = 0; }
         public void resetDragStart() { drag.start = pos; }
-    };
+    }
+    private List<Mouse.Event> mouseEvents = new ArrayList<>();
     //====================================================================
     public UIComponent getStage() { return stage; }
     public MouseState getMouseState() { return mouseState; }
+    public Int2 getMousePos() { return mouseState.pos; }
 
     public void show(boolean show) {
         if(show) glfwShowWindow(window);
@@ -111,7 +108,7 @@ final public class Window {
         glfwSetWindowTitle(window, title);
     }
     public void setWindowIcon(String filename) {
-
+        // todo
     }
     //====================================================================
     /**
@@ -215,7 +212,6 @@ final public class Window {
         System.out.println("Video mode .... (" + vidmode.width() + "x" + vidmode.height() + ") " + vidmode.refreshRate() + "Hz");
         System.out.println("Window size ... " + getWindowSize());
 
-
         glfwSetKeyCallback(window, (window1, key, scancode, action, mods) -> {
             if(action == GLFW_PRESS) {
                 keys.add(key);
@@ -226,25 +222,41 @@ final public class Window {
         glfwSetMouseButtonCallback(window, (window1, button, action, mods) -> {
             mouseState.button[button] = (action == GLFW_PRESS);
             mouseState.mods.apply(mods);
+
             mouseState.drag.update(button);
+
+            var m = new Modifier();
+            m.apply(mods);
+
+            if(action==GLFW_PRESS) {
+                mouseEvents.add(Mouse.Event.button(button, true, m, mouseState.pos));
+            } else if(action==GLFW_RELEASE) {
+                mouseEvents.add(Mouse.Event.button(button, false, m, mouseState.pos));
+            }
 
             //stage.mouseButton(button, mouseState);
         });
         glfwSetCursorPosCallback(window, (window1, xpos, ypos) -> {
             mouseState.pos = new Int2((int)xpos, (int)ypos);
+
             mouseState.drag.update(0);
             mouseState.drag.update(1);
             mouseState.drag.update(2);
+
+            mouseEvents.add(Mouse.Event.move(new Int2((int)xpos, (int)ypos)));
 
             //stage.mouseMoved(mouseState);
         });
         glfwSetScrollCallback(window, (window1, xoffset, yoffset) -> {
             mouseState.wheelDelta = (int)yoffset;
+
+            mouseEvents.add(Mouse.Event.wheel((int)yoffset, mouseState.pos));
         });
 
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glViewport(0, 0, props.width, props.height);
 
+        stage = new Stage(this);
         stage.setRelPos(Int2.ZERO);
         stage.setSize(getWindowSize());
     }
@@ -281,6 +293,10 @@ final public class Window {
 
             glfwSwapBuffers(window);
             glfwPollEvents();
+
+            frame.mouseEvents.clear();
+            frame.mouseEvents.addAll(mouseEvents);
+            mouseEvents.clear();
 
             /// Update timing info
             var timestamp  = System.nanoTime();

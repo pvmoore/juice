@@ -38,14 +38,14 @@ final public class Util {
     /**
      * Run some checked exception code and wrap any exceptions in RuntimeException.
      */
-    public static <T> T exceptionContext(Lambda.RThrows<T> s) {
+    public static <T> T exceptionContext(Lambda.R_Throws<T> s) {
         try{
             return s.call();
         }catch(Throwable t) {
             throw new RuntimeException(t);
         }
     }
-    public static void exceptionContext(Lambda.VOIDThrows s) {
+    public static void exceptionContext(Lambda.V_Throws s) {
         try{
             s.call();
         }catch(Throwable t) {

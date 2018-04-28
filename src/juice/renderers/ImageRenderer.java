@@ -38,6 +38,10 @@ final public class ImageRenderer {
         RGBA colour;
     }
     //====================================================================================
+    public int getNumQuads() {
+        return quads.size();
+    }
+
     public ImageRenderer(Texture t) {
         this.texture = t;
         this.vao = new VAO();
@@ -63,6 +67,20 @@ final public class ImageRenderer {
         q.uvs = uvs;
         q.colour = colour;
         quads.add(q);
+        quadsChanged = true;
+        return this;
+    }
+    public ImageRenderer setQuad(int index, Rect<Integer> rect, Rect<Float> uvs, RGBA colour) {
+        Quad q = new Quad();
+        q.rect = rect;
+        q.uvs = uvs;
+        q.colour = colour;
+        quads.set(index, q);
+        quadsChanged = true;
+        return this;
+    }
+    public ImageRenderer removeQuad(int index) {
+        quads.remove(index);
         quadsChanged = true;
         return this;
     }

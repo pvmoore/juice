@@ -19,5 +19,5 @@ final public class Events {
     //=============================================================================
     private Events() {}
 
-    private ConcurrentLinkedDeque<Lambda.A> queue = new ConcurrentLinkedDeque<>();
+    private ConcurrentLinkedDeque<Lambda.AV> queue = new ConcurrentLinkedDeque<>();
 }

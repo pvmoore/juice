@@ -38,4 +38,8 @@ final public class RGBA {
     public Vector4f toVector4f() {
         return new Vector4f(r,g,b,a);
     }
+
+    @Override public String toString() {
+        return String.format("[%.2f, %.2f, %.2f, %.2f]", r,g,b,a);
+    }
 }

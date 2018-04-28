@@ -1,6 +1,8 @@
 package juice.components;
 
+import juice.Camera2D;
 import juice.Frame;
+import juice.Window;
 import juice.animation.Animations;
 
 import java.util.ArrayList;
@@ -11,21 +13,50 @@ final public class Stage extends UIComponent {
         void call();
     }
     //===================================================================
+    private Window window;
+    private Camera2D camera;
     private Animations animations = new Animations();
     private List<Hook> afterUpdateHooks = new ArrayList<>();
     //===================================================================
+    public Stage(Window window) {
+        this.window = window;
+        this.camera = new Camera2D(window.getWindowSize());
+    }
+    @Override public void destroy() {
+        for(var c : getChildren()) {
+            c.fireDestroy();
+        }
+    }
+
+    public Window getWindow() { return window; }
+    public Camera2D getCamera() { return camera; }
     public Animations getAnimations() { return animations; }
+    public MenuBar getMenuBar() {
+        return (MenuBar)getChildren().stream()
+                                     .filter(it->it instanceof MenuBar)
+                                     .findFirst()
+                                     .orElse(null);
+    }
 
     @Override public void update(Frame frame) {
+
         animations.update(frame.delta);
 
-        super.update(frame);
+        for(var c : getChildren()) {
+            c.fireUpdate(frame);
+        }
 
         if(!afterUpdateHooks.isEmpty()) {
             afterUpdateHooks.forEach(Hook::call);
             afterUpdateHooks.clear();
         }
     }
+    @Override public void render(Frame frame) {
+        for(var c : getChildren()) {
+            c.fireRender(frame);
+        }
+    }
+
     public void addAfterUpdateHook(Hook h) {
         afterUpdateHooks.add(h);
     }

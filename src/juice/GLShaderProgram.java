@@ -17,7 +17,10 @@ import static org.lwjgl.opengl.GL20.*;
 public class GLShaderProgram {
     private int id;
     private List<GLShader> shaders = new ArrayList<>();
-    private FloatBuffer buffer   = BufferUtils.createFloatBuffer(16);
+    private FloatBuffer buffer2  = BufferUtils.createFloatBuffer(2);
+    private FloatBuffer buffer3  = BufferUtils.createFloatBuffer(3);
+    private FloatBuffer buffer9  = BufferUtils.createFloatBuffer(9);
+    private FloatBuffer buffer16 = BufferUtils.createFloatBuffer(16);
 
     private class GLShader {
         int type;
@@ -93,11 +96,11 @@ public class GLShaderProgram {
         return this;
     }
     public GLShaderProgram setUniform(String name, Vector2f value) {
-        glUniform2fv(getLocation(name), value.get(buffer));
+        glUniform2fv(getLocation(name), value.get(buffer2));
         return this;
     }
     public GLShaderProgram setUniform(String name, Vector3f value) {
-        glUniform3fv(getLocation(name), value.get(buffer));
+        glUniform3fv(getLocation(name), value.get(buffer3));
         return this;
     }
     public GLShaderProgram setUniform(String name, Vector4f value) {
@@ -106,13 +109,13 @@ public class GLShaderProgram {
         return this;
     }
     public GLShaderProgram setUniform(String name, Matrix3f matrix) {
-        buffer.position(0);
-        glUniformMatrix3fv(getLocation(name), false, matrix.get(buffer));
+        buffer9.position(0);
+        glUniformMatrix3fv(getLocation(name), false, matrix.get(buffer9));
         return this;
     }
     public GLShaderProgram setUniform(String name, Matrix4f matrix) {
-        buffer.position(0);
-        glUniformMatrix4fv(getLocation(name), false, matrix.get(buffer));
+        buffer16.position(0);
+        glUniformMatrix4fv(getLocation(name), false, matrix.get(buffer16));
         return this;
     }
     //====================================================================================

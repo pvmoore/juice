@@ -1,5 +1,7 @@
 package juice.types;
 
+import org.joml.Vector2f;
+
 final public class Float2 {
     private float x;
     private float y;
@@ -26,6 +28,10 @@ final public class Float2 {
     }
     public Float2 sub(Float2 p) {
         return new Float2(x-p.x, y-p.y);
+    }
+
+    public Vector2f toVector2f() {
+        return new Vector2f(x,y);
     }
 
     @Override public int hashCode() {

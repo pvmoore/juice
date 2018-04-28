@@ -66,6 +66,10 @@ final public class RectangleRenderer {
         }
     }
     //====================================================================
+    public int getNumRectangles() {
+        return rectangles.size();
+    }
+
     public RectangleRenderer() {
         this.vao  = new VAO();
         this.prog = new GLShaderProgram()
@@ -84,6 +88,16 @@ final public class RectangleRenderer {
     }
     public RectangleRenderer addRectangle(Rectangle r) {
         rectangles.add(r);
+        verticesChanged = true;
+        return this;
+    }
+    public RectangleRenderer setRectangle(int index, Rectangle r) {
+        rectangles.set(index, r);
+        verticesChanged = true;
+        return this;
+    }
+    public RectangleRenderer removeRectangle(int index) {
+        rectangles.remove(index);
         verticesChanged = true;
         return this;
     }

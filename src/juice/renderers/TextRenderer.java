@@ -4,6 +4,7 @@ import juice.Font;
 import juice.GLShaderProgram;
 import juice.VAO;
 import juice.VBO;
+import juice.types.Float2;
 import juice.types.Int2;
 import juice.types.RGBA;
 import org.joml.Matrix4f;
@@ -31,12 +32,17 @@ final public class TextRenderer {
     private int numCharacters;
     private RGBA colour = RGBA.WHITE;
     private float size;
+    private boolean useDropShadow = true;
 
     private static final class Chunk {
         String text;
         Int2 pos;
         RGBA colour;
         float size;
+    }
+
+    public int getNumChunks() {
+        return chunks.size();
     }
 
     public TextRenderer(Font font) {
@@ -61,9 +67,21 @@ final public class TextRenderer {
         prog.destroy();
         dsProg.destroy();
     }
+    public TextRenderer setUseDropShadow(boolean flag) {
+        useDropShadow = flag;
+        return this;
+    }
     public TextRenderer setVP(Matrix4f viewProj) {
         prog.use().setUniform("VP", viewProj);
         dsProg.use().setUniform("VP", viewProj);
+        return this;
+    }
+    public TextRenderer setDropShadowOffset(Float2 offset) {
+        dsProg.use().setUniform("dsOffset", offset.toVector2f());
+        return this;
+    }
+    public TextRenderer setDropShadowColour(RGBA colour) {
+        dsProg.use().setUniform("dsColour", colour.toVector4f());
         return this;
     }
     public TextRenderer setColour(RGBA c) {
@@ -90,6 +108,29 @@ final public class TextRenderer {
         textChanged = true;
         return this;
     }
+    public TextRenderer replacePos(int index, Int2 pos) {
+        var ch = chunks.get(index);
+        ch.pos = pos;
+        textChanged = true;
+        return this;
+    }
+    public TextRenderer replaceColour(int index, RGBA colour) {
+        var ch = chunks.get(index);
+        ch.colour = colour;
+        textChanged = true;
+        return this;
+    }
+    public TextRenderer replaceSize(int index, float size) {
+        var ch = chunks.get(index);
+        ch.size = size;
+        textChanged = true;
+        return this;
+    }
+    public TextRenderer removeText(int index) {
+        chunks.remove(index);
+        textChanged = true;
+        return this;
+    }
     public TextRenderer clearText() {
         chunks.clear();
         textChanged = true;
@@ -103,9 +144,11 @@ final public class TextRenderer {
         glActiveTexture(GL_TEXTURE0 + 0);
         glBindTexture(GL_TEXTURE_2D, font.texture.id);
 
-        // Drop shadow
-        dsProg.use();
-        glDrawArrays(GL_TRIANGLES, 0, numCharacters * 6);   // 6 vertices per char
+        if(useDropShadow) {
+            // Drop shadow
+            dsProg.use();
+            glDrawArrays(GL_TRIANGLES, 0, numCharacters * 6);   // 6 vertices per char
+        }
 
         // Normal
         prog.use();

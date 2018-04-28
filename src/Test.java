@@ -1,9 +1,7 @@
-import juice.Camera2D;
 import juice.Frame;
 import juice.Texture;
 import juice.Window;
-import juice.components.Sprite;
-import juice.components.UIComponent;
+import juice.components.*;
 import juice.renderers.RectangleRenderer;
 import juice.renderers.RoundRectangleRenderer;
 import juice.types.Int2;
@@ -38,7 +36,7 @@ public class Test {
             p.fontDir    = "./fonts/";
         });
 
-        mainComponent = new MainComponent(window);
+        mainComponent = new MainComponent();
 
         // Add our main UI component
         window.getStage().add(mainComponent);
@@ -55,62 +53,91 @@ public class Test {
     }
     //======================================================================
     class MainComponent extends UIComponent {
-        private Camera2D camera2d;
-        private Window window;
         private Sprite sprite;
         private RectangleRenderer rectangles;
         private RoundRectangleRenderer roundRectangles;
 
-        MainComponent(Window w) {
-            this.window = w;
-            this.camera2d = new Camera2D(w.getWindowSize());
-            this.sprite = new Sprite()
-                .setVP(camera2d.VP())
-                .setTexture(Texture.get("bishop-256.png", Texture.standardAttribs));
-
-            glClearColor(0,0,0,0f);
+        MainComponent() {
+            glClearColor(0, 0, 0, 0f);
 
             // Enable alpha blending
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+        }
+        @Override public void onAdded() {
+            // Large sprite
+            this.sprite = new Sprite()
+                .setVP(getStage().getCamera().VP())
+                .setTexture(Texture.get("bishop-256.png", Texture.standardAttribs));
             sprite.setSize(new Int2(256,256));
-            sprite.setRelPos(new Int2(10,10));
+            sprite.setRelPos(new Int2(10,100));
+            add(sprite);
 
+            // A rectangle
             rectangles = new RectangleRenderer()
-                .setVP(camera2d.VP())
+                .setVP(getStage().getCamera().VP())
                 // 0-1
                 // | |
                 // 3-2
                 .addRectangle(new RectangleRenderer.Rectangle(
-                    new Int2(300,10), new Int2(400,10), new Int2(400,110), new Int2(300,110),
+                    new Int2(300,100), new Int2(400,100), new Int2(400,210), new Int2(300,210),
                     RGBA.WHITE, RGBA.BLUE, RGBA.GREEN, RGBA.RED
                 ));
 
+            // Some round rectangles
+            var magenta = RGBA.BLUE.blend(RGBA.RED).gamma(0.7f);
+
             roundRectangles = new RoundRectangleRenderer()
-                .setVP(camera2d.VP())
+                .setVP(getStage().getCamera().VP())
                 // Flag
                 .addRectangle(new RoundRectangleRenderer.Rectangle(
-                    new Int2(430, 10), new Int2(100,100),
+                    new Int2(430, 100), new Int2(100,100),
                     RGBA.WHITE, RGBA.WHITE, RGBA.WHITE, RGBA.RED,
                     0, 0, 10, 40
                 ))
                 // White border
                 .addRectangle(new RoundRectangleRenderer.Rectangle(
-                    new Int2(550, 10), new Int2(100,100),
-                    RGBA.WHITE, 32
+                    new Int2(550, 100), new Int2(100,100),
+                    RGBA.WHITE.gamma(0.7f), RGBA.WHITE.gamma(2), RGBA.WHITE.gamma(0.7f), RGBA.WHITE.gamma(0.05f),
+                    32, 32, 32, 32
                 ))
                 .addRectangle(new RoundRectangleRenderer.Rectangle(
-                    new Int2(555, 15), new Int2(90,90),
-                    RGBA.BLUE.blend(RGBA.RED), 30
+                    new Int2(555, 105), new Int2(90,90),
+                    magenta, magenta, magenta.alpha(0.5f), magenta.alpha(0.5f),
+                    30, 30, 30, 30
                 ));
 
-            add(sprite);
+            // A menu
+            var bar = new MenuBar();
+            bar.setRelPos(new Int2(0,0));
+            bar.setSize(new Int2(400, 30));
+            add(bar);
+
+            var file = new Menu("File", 60);
+            var game = new Menu("Game", 80);
+            var three = new Menu("Three things", 100);
+            var about = new Menu("About", 70);
+
+
+
+            file.add(new MenuItem("Exit", ()->{}));
+            file.add(new MenuItem("Open", () -> {}));
+            file.add(new MenuItem("Save", () -> {}));
+
+
+            three.add(new MenuItem("Thing 1", () -> {}));
+            three.add(new MenuItem("Thing 2", () -> {}).setEnabled(false));
+            three.add(new MenuItem("Thing 3", () -> {}));
+            three.add(new MenuItem("Thing 4", () -> System.out.println("Thing 4")));
+            three.add(new MenuItem("Thing 5", () -> {}));
+
+            bar.add(file);
+            bar.add(game);
+            bar.add(three);
+            bar.add(about);
         }
 
         @Override public void destroy() {
-            super.destroy();
-
             rectangles.destroy();
             roundRectangles.destroy();
         }
@@ -123,15 +150,11 @@ public class Test {
             }
 
             //animations.update(frame.delta);
-
-            super.update(frame);
         }
 
         @Override public void render(Frame frame) {
 
             glClear(GL_COLOR_BUFFER_BIT);
-
-            super.render(frame);
 
             rectangles.render();
             roundRectangles.render();

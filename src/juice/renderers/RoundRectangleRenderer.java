@@ -51,6 +51,10 @@ final public class RoundRectangleRenderer {
         }
     }
     //====================================================================
+    public int getNumRectangles() {
+        return rectangles.size();
+    }
+
     public RoundRectangleRenderer() {
         this.vao  = new VAO();
         this.prog = new GLShaderProgram()
@@ -70,6 +74,18 @@ final public class RoundRectangleRenderer {
     public RoundRectangleRenderer addRectangle(Rectangle r) {
         rectangles.add(r);
         verticesChanged = true;
+        return this;
+    }
+    public RoundRectangleRenderer setRectangle(int index, Rectangle r) {
+        rectangles.set(index, r);
+        verticesChanged = true;
+        return this;
+    }
+    public RoundRectangleRenderer removeRectangle(int index) {
+        if(index < rectangles.size()) {
+            rectangles.remove(index);
+            verticesChanged = true;
+        }
         return this;
     }
     public RoundRectangleRenderer clearRectangles() {

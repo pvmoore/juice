@@ -13,8 +13,8 @@ final public class DragComponent {
     private boolean isEnabled = true;
 
     public interface Listener {
-        void onDragMoved(Int2 delta);
-        void onDragDropped(Int2 delta);
+        default void onDragMoved(Int2 delta) {}
+        default void onDragDropped(Int2 delta) {}
     }
 
     public DragComponent(Listener listener) {

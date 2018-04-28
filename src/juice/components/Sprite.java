@@ -39,8 +39,6 @@ public class Sprite extends UIComponent {
         populateVbo();
     }
     @Override public void destroy() {
-        super.destroy();
-
         if(vao!=null) {
             if(vbo != null) vbo.destroy();
             vao.destroy();
@@ -68,8 +66,6 @@ public class Sprite extends UIComponent {
     }
 
     @Override public void update(Frame frame) {
-        super.update(frame);
-
         if(modelMatrixChanged) {
             modelMatrixChanged = false;
             var p = getAbsPos();
@@ -90,8 +86,6 @@ public class Sprite extends UIComponent {
         glActiveTexture(GL_TEXTURE0 + 0);
         glBindTexture(GL_TEXTURE_2D, texture.id);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);   // 4 vertices
-
-        super.render(frame);
     }
     //====================================================================================
     private void populateVbo() {

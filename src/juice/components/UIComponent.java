@@ -52,7 +52,9 @@ public class UIComponent {
     }
     public Stage getStage() {
         if(this instanceof Stage) return (Stage)this;
-        if(parent==null) System.out.println("Wowza!! "+this.getClass().getSimpleName());
+        if(parent==null) {
+            return null;
+        }
         return parent.getStage();
     }
     //====================================================================
@@ -71,13 +73,16 @@ public class UIComponent {
         // Call events
         child.onAdded();
         onChildAdded(child);
+        if(getStage()!=null) child.fireOnAddedToStage();
     }
     public void remove(UIComponent child) {
+        boolean isOnStage = getStage()!=null;
         child.parent = null;
         if(children.remove(child)) {
             // Call events of child was actually removed
             child.onRemoved();
             onChildRemoved(child);
+            if(isOnStage) child.fireOnRemovedFromStage();
         }
     }
     public boolean isAttached() {
@@ -88,19 +93,13 @@ public class UIComponent {
         parent.remove(this);
     }
     public void destroy() {
-        for(var c : children) {
-            c.destroy();
-        }
+
     }
     public void update(Frame frame) {
-        for(var c : children) {
-            c.update(frame);
-        }
+
     }
     public void render(Frame frame) {
-        for(var c : children) {
-            c.render(frame);
-        }
+
     }
     //====================================================================
     // Child events
@@ -110,6 +109,14 @@ public class UIComponent {
     }
     public void onRemoved() {
         // override if you need to do things after you are removed
+    }
+    public void onAddedToStage() {
+        // override if you need to do things after you are
+        // added to the stage (directly or indirectly)
+    }
+    public void onRemovedFromStage() {
+        // override if you need to do things after you are
+        // removed from the stage (directly or indirectly)
     }
     public void onMoved() {
         // override if you are interested in move events
@@ -137,5 +144,36 @@ public class UIComponent {
             s += "\n\t" + c.toString();
         }
         return s;
+    }
+    //====================================================================
+    protected void fireDestroy() {
+        destroy();
+        for(var c : children) {
+            c.fireDestroy();
+        }
+    }
+    protected void fireUpdate(Frame frame) {
+        update(frame);
+        for(var c : children) {
+            c.fireUpdate(frame);
+        }
+    }
+    protected void fireRender(Frame frame) {
+        render(frame);
+        for(var c : children) {
+            c.fireRender(frame);
+        }
+    }
+    private void fireOnAddedToStage() {
+        onAddedToStage();
+        for(var c : children) {
+            c.fireOnAddedToStage();
+        }
+    }
+    private void fireOnRemovedFromStage() {
+        onRemovedFromStage();
+        for(var c : children) {
+            c.fireOnRemovedFromStage();
+        }
     }
 }
