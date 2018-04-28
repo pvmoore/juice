@@ -121,6 +121,7 @@ public class Test {
 
 
             file.add(new MenuItem("Exit", ()->{}));
+            file.addSeparator();
             file.add(new MenuItem("Open", () -> {}));
             file.add(new MenuItem("Save", () -> {}));
 
@@ -128,6 +129,7 @@ public class Test {
             three.add(new MenuItem("Thing 1", () -> {}));
             three.add(new MenuItem("Thing 2", () -> {}).setEnabled(false));
             three.add(new MenuItem("Thing 3", () -> {}));
+            three.addSeparator();
             three.add(new MenuItem("Thing 4", () -> System.out.println("Thing 4")));
             three.add(new MenuItem("Thing 5", () -> {}));
 

@@ -7,9 +7,18 @@ import juice.types.Int2;
 import juice.types.RGBA;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 final public class Menu extends UIComponent {
+    private static final int MENU_HIGHLIGHT = 2;
+    private static final int ITEM_HIGHLIGHT = 3;
+    private static final int SEPARATORS     = 4;
+
+    private static final RGBA INVISIBLE     = new RGBA(0,0,0,0);
+    private static final RGBA SEP_COLOUR    = RGBA.WHITE.gamma(0.8f);
+
     private RoundRectangleRenderer roundRectangles;
     private TextRenderer text;
     private String label;
@@ -18,6 +27,7 @@ final public class Menu extends UIComponent {
     private Int2 originalSize;
 
     private List<MenuItem> items = new ArrayList<>();
+    private Set<Integer> separators = new HashSet<>();
 
     public Menu(String label, int width) {
         this.label = label;
@@ -40,6 +50,9 @@ final public class Menu extends UIComponent {
         if(!(child instanceof MenuItem)) throw new RuntimeException("Only add MenuItems to Menus");
 
         items.add((MenuItem)child);
+    }
+    public void addSeparator() {
+        separators.add(items.size());
     }
     @Override public void onAddedToStage() {
         this.originalSize = getSize();
@@ -71,6 +84,20 @@ final public class Menu extends UIComponent {
                 size.sub(4,2),
                 c2,c2,c2,c2,
                 0, 0, 5, 5
+            ))
+            // Menu highlight
+            .addRectangle(new RoundRectangleRenderer.Rectangle(
+                Int2.ZERO,
+                Int2.ZERO,
+                INVISIBLE,
+                0
+            ))
+            // Item highlight
+            .addRectangle(new RoundRectangleRenderer.Rectangle(
+                Int2.ZERO,
+                Int2.ZERO,
+                INVISIBLE,
+                0
             ));
 
         var font = getBar().getFont();
@@ -100,7 +127,6 @@ final public class Menu extends UIComponent {
         if(!isOpen) return;
 
         var index = item.getIndex();
-        var y     = originalSize.getY() + index*26;
         var c     = RGBA.RED.blend(RGBA.BLUE).alpha(0.2f);
         var r     = 0;
 
@@ -108,28 +134,23 @@ final public class Menu extends UIComponent {
             r = 5;
         }
 
-        if(roundRectangles.getNumRectangles()==3) {
-            roundRectangles.addRectangle(new RoundRectangleRenderer.Rectangle(
-                item.getAbsPos(),
-                item.getSize(),
-                c, c, c, c,
-                0, 0, r, r
-            ));
-        } else {
-            roundRectangles.setRectangle(3, new RoundRectangleRenderer.Rectangle(
-                item.getAbsPos(),
-                item.getSize(),
-                c, c, c, c,
-                0, 0, r, r
-            ));
-        }
+        roundRectangles.setRectangle(ITEM_HIGHLIGHT, new RoundRectangleRenderer.Rectangle(
+            item.getAbsPos(),
+            item.getSize(),
+            c, c, c, c,
+            0, 0, r, r
+        ));
     }
     private void openMenu() {
         if(items.size()==0) return;
 
         isOpen = true;
 
-        setSize(getSize().add(0, items.size()*26 + 5));
+        final int ITEM_HEIGHT = 26;
+        final int SEP_HEIGHT  = 7;
+        final int SEP_WIDTH   = getSize().getX() / 4 * 3;
+
+        setSize(getSize().add(0, items.size()*ITEM_HEIGHT + separators.size()*SEP_HEIGHT + 5));
 
         var pos  = getAbsPos();
         var size = getSize();
@@ -149,8 +170,8 @@ final public class Menu extends UIComponent {
             c2,c2.gamma(2),c2.gamma(0.9f),c2.gamma(0.7f),
             0, 0, 8, 8
         ));
-
-        roundRectangles.addRectangle(new RoundRectangleRenderer.Rectangle(
+        // Show highlight
+        roundRectangles.setRectangle(MENU_HIGHLIGHT, new RoundRectangleRenderer.Rectangle(
             pos,
             originalSize,
             c3,c3,c3,c3,
@@ -159,11 +180,28 @@ final public class Menu extends UIComponent {
 
         getStage().addAfterUpdateHook(() -> {
             var y = originalSize.getY();
+            var i = 0;
             for(var item : items) {
+
+                if(separators.contains(i)) {
+                    // Add a separator rectangle here
+
+                    roundRectangles.addRectangle(new RoundRectangleRenderer.Rectangle(
+                        pos.add((originalSize.getX() - SEP_WIDTH)/2, y+3),
+                        new Int2(SEP_WIDTH, 2),
+                        SEP_COLOUR, SEP_COLOUR, SEP_COLOUR, SEP_COLOUR,
+                        2,2,2,2
+                    ));
+
+                    y += SEP_HEIGHT;
+                }
+
                 item.setRelPos(new Int2(0, y));
                 item.setSize(originalSize);
                 super.add(item);
-                y += 26;
+
+                y += ITEM_HEIGHT;
+                i++;
             }
         });
     }
@@ -178,6 +216,8 @@ final public class Menu extends UIComponent {
         var size = getSize();
         var c1   = RGBA.WHITE.gamma(0.8f);
         var c2   = RGBA.WHITE;
+        var c3   = RGBA.RED.blend(RGBA.BLUE).alpha(0.3f);
+        var c4   = RGBA.RED.blend(RGBA.BLUE).alpha(0.2f);
 
         roundRectangles.setRectangle(0, new RoundRectangleRenderer.Rectangle(
             pos,
@@ -191,9 +231,23 @@ final public class Menu extends UIComponent {
             c2,c2,c2,c2,
             0, 0, 5, 5
         ));
+        roundRectangles.setRectangle(MENU_HIGHLIGHT, new RoundRectangleRenderer.Rectangle(
+            Int2.ZERO,
+            Int2.ZERO,
+            INVISIBLE,
+            0
+        ));
+        roundRectangles.setRectangle(ITEM_HIGHLIGHT, new RoundRectangleRenderer.Rectangle(
+            Int2.ZERO,
+            Int2.ZERO,
+            INVISIBLE,
+            0
+        ));
 
-        roundRectangles.removeRectangle(2); // top highlight
-        roundRectangles.removeRectangle(2); // item highlight
+        // Remove separators
+        while(roundRectangles.getNumRectangles() > SEPARATORS) {
+            roundRectangles.removeRectangle(SEPARATORS);
+        }
 
         getStage().addAfterUpdateHook(() -> {
             for(var item : items) {
