@@ -81,6 +81,18 @@ final public class RoundRectangleRenderer {
         verticesChanged = true;
         return this;
     }
+    public RoundRectangleRenderer setRectanglePos(int index, Int2 pos) {
+        var r = rectangles.get(index);
+        r.pos = pos;
+        verticesChanged = true;
+        return this;
+    }
+    public RoundRectangleRenderer setRectangleSize(int index, Int2 size) {
+        var r = rectangles.get(index);
+        r.size = size;
+        verticesChanged = true;
+        return this;
+    }
     public RoundRectangleRenderer removeRectangle(int index) {
         if(index < rectangles.size()) {
             rectangles.remove(index);

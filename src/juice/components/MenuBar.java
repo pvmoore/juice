@@ -10,8 +10,14 @@ final public class MenuBar extends UIComponent {
     private RoundRectangleRenderer roundRectangles;
     private Font font;
     private int nextX = 5;
+    private RGBA highlightColour = RGBA.RED.blend(RGBA.BLUE);
 
     public Font getFont() { return font; }
+    public RGBA getHighlightColour() { return highlightColour; }
+
+    public void setHighlightColour(RGBA highlightColour) {
+        this.highlightColour = highlightColour;
+    }
 
     @Override public void add(UIComponent child) {
         if(!(child instanceof Menu)) throw new RuntimeException("Only add Menus to MenuBar");

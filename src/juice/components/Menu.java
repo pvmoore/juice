@@ -127,7 +127,7 @@ final public class Menu extends UIComponent {
         if(!isOpen) return;
 
         var index = item.getIndex();
-        var c     = RGBA.RED.blend(RGBA.BLUE).alpha(0.2f);
+        var c     = getBar().getHighlightColour().alpha(0.3f);
         var r     = 0;
 
         if(index==items.size()-1) {
@@ -137,7 +137,7 @@ final public class Menu extends UIComponent {
         roundRectangles.setRectangle(ITEM_HIGHLIGHT, new RoundRectangleRenderer.Rectangle(
             item.getAbsPos(),
             item.getSize(),
-            c, c, c, c,
+            c, c, c.alpha(0.2f), c.alpha(0.2f),
             0, 0, r, r
         ));
     }
@@ -154,14 +154,14 @@ final public class Menu extends UIComponent {
 
         var pos  = getAbsPos();
         var size = getSize();
-        var c1   = RGBA.WHITE.gamma(0.8f);
+        var c1   = RGBA.BLACK;//RGBA.WHITE.gamma(0.5f);
         var c2   = RGBA.WHITE;
-        var c3   = RGBA.RED.blend(RGBA.BLUE).alpha(0.3f);
+        var c3   = getBar().getHighlightColour().alpha(0.4f);
 
         roundRectangles.setRectangle(0, new RoundRectangleRenderer.Rectangle(
             pos,
             size,
-            c1,c1, c1.alpha(0.5f), c1.alpha(0.5f),
+            c1.alpha(0.1f), c1.alpha(0.1f), c1.alpha(0.4f), c1.alpha(0.4f),
             0, 0, 10, 10
         ));
         roundRectangles.setRectangle(1, new RoundRectangleRenderer.Rectangle(
@@ -174,8 +174,8 @@ final public class Menu extends UIComponent {
         roundRectangles.setRectangle(MENU_HIGHLIGHT, new RoundRectangleRenderer.Rectangle(
             pos,
             originalSize,
-            c3,c3,c3,c3,
-            0, 0, 5, 5
+            c3,c3, c3.alpha(0.2f),c3.alpha(0.2f),
+            0, 0, 0, 0
         ));
 
         getStage().addAfterUpdateHook(() -> {

@@ -17,6 +17,9 @@ final public class RGBA {
     public RGBA(float r, float g, float b) {
         this.r = r; this.g = g; this.b = b; this.a = 1;
     }
+    public RGBA(int rgb) {
+        this(((rgb>>16)&0xff)/255f, ((rgb>>8)&0xff)/255f, (rgb&0xff)/255f);
+    }
     public RGBA gamma(float f) {
         return new RGBA(r*f, g*f, b*f, a);
     }

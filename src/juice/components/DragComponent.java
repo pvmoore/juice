@@ -13,7 +13,7 @@ final public class DragComponent {
     private boolean isEnabled = true;
 
     public interface Listener {
-        default void onDragMoved(Int2 delta) {}
+        default void onDragMoved(Int2 start, Int2 delta) {}
         default void onDragDropped(Int2 delta) {}
     }
 
@@ -36,7 +36,7 @@ final public class DragComponent {
         if(currentlyDragging) {
             if(lastDragPos != state.pos) {
                 lastDragPos = state.pos;
-                listener.onDragMoved(state.pos.sub(state.drag.start));
+                listener.onDragMoved(state.drag.start, state.pos.sub(state.drag.start));
                 moved = true;
             }
             if(!nowDragging) {
