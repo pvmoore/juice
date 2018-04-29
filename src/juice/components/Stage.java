@@ -31,12 +31,6 @@ final public class Stage extends UIComponent {
     public Window getWindow() { return window; }
     public Camera2D getCamera() { return camera; }
     public Animations getAnimations() { return animations; }
-    public MenuBar getMenuBar() {
-        return (MenuBar)getChildren().stream()
-                                     .filter(it->it instanceof MenuBar)
-                                     .findFirst()
-                                     .orElse(null);
-    }
 
     @Override public void update(Frame frame) {
 

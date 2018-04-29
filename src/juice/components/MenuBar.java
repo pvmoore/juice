@@ -18,6 +18,9 @@ final public class MenuBar extends UIComponent {
     public void setHighlightColour(RGBA highlightColour) {
         this.highlightColour = highlightColour;
     }
+    public Menu getMenu(int index) {
+        return (Menu)getChildren().get(index);
+    }
 
     @Override public void add(UIComponent child) {
         if(!(child instanceof Menu)) throw new RuntimeException("Only add Menus to MenuBar");

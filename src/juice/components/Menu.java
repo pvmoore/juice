@@ -40,6 +40,10 @@ final public class Menu extends UIComponent {
     public TextRenderer getText() { return text; }
     public int getIndex(MenuItem item) { return items.indexOf(item); }
 
+    public MenuItem getItem(int index) {
+        return items.get(index);
+    }
+
     public MenuBar getBar() {
         var p = getParent();
         if(p instanceof MenuBar) return (MenuBar)p;

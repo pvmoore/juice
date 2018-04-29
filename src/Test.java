@@ -8,7 +8,6 @@ import juice.types.Int2;
 import juice.types.RGBA;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.opengl.GL11.*;
 
 public class Test {
     private Window window;
@@ -58,11 +57,7 @@ public class Test {
         private RoundRectangleRenderer roundRectangles;
 
         MainComponent() {
-            glClearColor(0, 0, 0, 0f);
 
-            // Enable alpha blending
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         }
         @Override public void onAdded() {
             // Large sprite
@@ -155,9 +150,6 @@ public class Test {
         }
 
         @Override public void render(Frame frame) {
-
-            glClear(GL_COLOR_BUFFER_BIT);
-
             rectangles.render();
             roundRectangles.render();
         }

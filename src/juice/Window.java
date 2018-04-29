@@ -3,6 +3,7 @@ package juice;
 import juice.components.Stage;
 import juice.components.UIComponent;
 import juice.types.Int2;
+import juice.types.RGBA;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -109,6 +110,9 @@ final public class Window {
     }
     public void setWindowIcon(String filename) {
         // todo
+    }
+    public void setClearColour(RGBA c) {
+        glClearColor(c.r, c.g, c.b, c.a);
     }
     //====================================================================
     /**
@@ -256,6 +260,10 @@ final public class Window {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glViewport(0, 0, props.width, props.height);
 
+        // Enable alpha blending
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         stage = new Stage(this);
         stage.setRelPos(Int2.ZERO);
         stage.setSize(getWindowSize());
@@ -287,6 +295,8 @@ final public class Window {
             frame.number = frameNumber;
             frame.nsecs  = System.nanoTime()-startTimestamp;
             frame.delta  = delta;
+
+            glClear(GL_COLOR_BUFFER_BIT);
 
             stage.update(frame);
             stage.render(frame);
