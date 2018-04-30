@@ -40,6 +40,7 @@ final public class ParagraphTextRenderer {
     }
     public ParagraphTextRenderer setRect(Int2 pos, Int2 size) {
         this.rect = new Rect<>(pos.getX(), pos.getY(), size.getX(), size.getY());
+        reset();
         return this;
     }
     public ParagraphTextRenderer setColour(RGBA c) {
