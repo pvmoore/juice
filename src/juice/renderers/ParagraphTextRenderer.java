@@ -38,6 +38,10 @@ final public class ParagraphTextRenderer {
         text.setVP(viewProj);
         return this;
     }
+    public ParagraphTextRenderer setRect(Rect<Integer> rect) {
+        this.rect = rect;
+        return this;
+    }
     public ParagraphTextRenderer setColour(RGBA c) {
         this.colour = c;
         text.setColour(c);
@@ -122,9 +126,10 @@ final public class ParagraphTextRenderer {
         return this;
     }
     public ParagraphTextRenderer clear() {
-        return  this;
+        text.clearText();
+        reset();
+        return this;
     }
-
     public void render() {
         text.render();
     }
