@@ -25,9 +25,9 @@ final public class ParagraphTextRenderer {
         Token(String s, Float2 dim) { this.s = s; this.dim = dim; }
     }
 
-    public ParagraphTextRenderer(Font font, Rect<Integer> rect) {
+    public ParagraphTextRenderer(Font font, Int2 pos, Int2 size) {
         this.font = font;
-        this.rect = rect;
+        this.rect = new Rect<>(pos.getX(), pos.getY(), size.getX(), size.getY());
         this.text = new TextRenderer(font);
         reset();
     }
@@ -38,8 +38,8 @@ final public class ParagraphTextRenderer {
         text.setVP(viewProj);
         return this;
     }
-    public ParagraphTextRenderer setRect(Rect<Integer> rect) {
-        this.rect = rect;
+    public ParagraphTextRenderer setRect(Int2 pos, Int2 size) {
+        this.rect = new Rect<>(pos.getX(), pos.getY(), size.getX(), size.getY());
         return this;
     }
     public ParagraphTextRenderer setColour(RGBA c) {

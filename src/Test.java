@@ -8,7 +8,6 @@ import juice.renderers.RectangleRenderer;
 import juice.renderers.RoundRectangleRenderer;
 import juice.types.Int2;
 import juice.types.RGBA;
-import juice.types.Rect;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 
@@ -153,7 +152,7 @@ public class Test {
             ));
 
             paraText = new ParagraphTextRenderer(Font.get("segoe-ui"),
-                                                 new Rect<>(20, 400, 200, 300))
+                                                 new Int2(20, 400), new Int2(200, 300))
                 .setVP(getStage().getCamera().VP());
 
             paraText.setColour(RGBA.WHITE)
