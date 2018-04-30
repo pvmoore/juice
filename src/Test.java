@@ -1,11 +1,14 @@
+import juice.Font;
 import juice.Frame;
 import juice.Texture;
 import juice.Window;
 import juice.components.*;
+import juice.renderers.ParagraphTextRenderer;
 import juice.renderers.RectangleRenderer;
 import juice.renderers.RoundRectangleRenderer;
 import juice.types.Int2;
 import juice.types.RGBA;
+import juice.types.Rect;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 
@@ -55,11 +58,18 @@ public class Test {
         private Sprite sprite;
         private RectangleRenderer rectangles;
         private RoundRectangleRenderer roundRectangles;
+        private ParagraphTextRenderer paraText;
 
         MainComponent() {
 
         }
-        @Override public void onAdded() {
+        @Override public void onAddedToStage() {
+            createSprite();
+            createRectangles();
+            createMenu();
+            createText();
+        }
+        void createSprite() {
             // Large sprite
             this.sprite = new Sprite()
                 .setVP(getStage().getCamera().VP())
@@ -67,7 +77,8 @@ public class Test {
             sprite.setSize(new Int2(256,256));
             sprite.setRelPos(new Int2(10,100));
             add(sprite);
-
+        }
+        void createRectangles() {
             // A rectangle
             rectangles = new RectangleRenderer()
                 .setVP(getStage().getCamera().VP())
@@ -101,8 +112,8 @@ public class Test {
                     magenta, magenta, magenta.alpha(0.5f), magenta.alpha(0.5f),
                     30, 30, 30, 30
                 ));
-
-            // A menu
+        }
+        void createMenu() {
             var bar = new MenuBar();
             bar.setRelPos(new Int2(0,0));
             bar.setSize(new Int2(400, 30));
@@ -133,10 +144,38 @@ public class Test {
             bar.add(three);
             bar.add(about);
         }
+        void createText() {
+            var c = RGBA.WHITE.gamma(0.2f);
+
+            rectangles.addRectangle(new RectangleRenderer.Rectangle(
+                new Int2(20,400), new Int2(220,400), new Int2(220,700), new Int2(20,700),
+                c,c,c,c
+            ));
+
+            paraText = new ParagraphTextRenderer(Font.get("segoe-ui"),
+                                                 new Rect<>(20, 400, 200, 300))
+                .setVP(getStage().getCamera().VP());
+
+            paraText.setColour(RGBA.WHITE)
+                    .setSize(18)
+                    .left("I am left justified.")
+                    .left("Me too...")
+                    .newLine()
+                    .setColour(RGBA.YELLOW)
+                    .justified("I am an example of some justified text")
+                    .newLine()
+                    .setColour(RGBA.WHITE)
+                    .setSize(32)
+                    .centred("I am centred")
+                    .newLine()
+                    .setSize(18)
+                    .left("Left justified again...");
+        }
 
         @Override public void destroy() {
             rectangles.destroy();
             roundRectangles.destroy();
+            paraText.destroy();
         }
 
         @Override public void update(Frame frame) {
@@ -145,13 +184,12 @@ public class Test {
             if(keys.contains(GLFW_KEY_ESCAPE)) {
                 window.close();
             }
-
-            //animations.update(frame.delta);
         }
 
         @Override public void render(Frame frame) {
             rectangles.render();
             roundRectangles.render();
+            paraText.render();
         }
     }
 }
