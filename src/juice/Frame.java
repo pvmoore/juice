@@ -19,4 +19,10 @@ final public class Frame {
                           .filter(it->forComponent.enclosesPoint(it.pos))
                           .collect(Collectors.toList());
     }
+    public List<Mouse.Event> getLocalMouseEvents(UIComponent forComponent, Mouse.EventType type) {
+        return mouseEvents.stream()
+                          .filter(it->forComponent.enclosesPoint(it.pos))
+                          .filter(it->it.type==type)
+                          .collect(Collectors.toList());
+    }
 }

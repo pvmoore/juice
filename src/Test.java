@@ -161,14 +161,15 @@ public class Test {
                     .left("Me too...")
                     .newLine()
                     .setColour(RGBA.YELLOW)
-                    .justified("I am an example of some justified text")
+                    .justified("I am an example of some justified text.\nLine.\nLine.")
                     .newLine()
                     .setColour(RGBA.WHITE)
                     .setSize(32)
                     .centred("I am centred")
                     .newLine()
                     .setSize(18)
-                    .left("Left justified again...");
+                    .left("Left justified\nagain")
+                    .left("...");
         }
 
         @Override public void destroy() {

@@ -1,6 +1,7 @@
 package juice.renderers;
 
 import juice.Font;
+import juice.Lambda;
 import juice.types.Float2;
 import juice.types.Int2;
 import juice.types.RGBA;
@@ -66,9 +67,13 @@ final public class ParagraphTextRenderer {
         return this;
     }
     public ParagraphTextRenderer left(String str) {
-        for(var w : str.split("\\s+")) {
-            writeWord(w, font.getDimension(w, size), wordSpacing);
-        }
+
+        handleNewLines(str, (String s)->{
+            for(var w : s.split("\\s+")) {
+                writeWord(w, font.getDimension(w, size), wordSpacing);
+            }
+        });
+
         return this;
     }
     public ParagraphTextRenderer centred(String str) {
@@ -83,47 +88,51 @@ final public class ParagraphTextRenderer {
         prevRect.w += remainder/2;
         return left(str);
     }
-    public ParagraphTextRenderer justified(String str) {
-        List<Token> tokens = new ArrayList<>();
+    public ParagraphTextRenderer justified(String multilineString) {
 
-        for(var w : str.split("\\s+")) {
-            tokens.add(new Token(w, font.getDimension(w, size)));
-        }
+        handleNewLines(multilineString, (String str)->{
+            List<Token> tokens = new ArrayList<>();
 
-        while(tokens.size() > 0) {
-            float leftEdge  = prevRect.x + prevRect.w;
-            float rightEdge = rect.x + rect.w;
-            int count       = countWordsUntilEOL(tokens, rightEdge - leftEdge);
-
-            //log("para: count=%s token[0]=%s", count, tokens[0][0]);
-
-            if(count==0 && tokens.get(0).dim.getX() > rect.w) {
-                // this word is too big for the rect width. just print it
-                count = 1;
+            for(var w : str.split("\\s+")) {
+                tokens.add(new Token(w, font.getDimension(w, size)));
             }
 
-            if(count==0) {
-                // no words fit on this line. go to the next line
-                newLine();
-            } else if(count==1) {
-                // 1 word fits on this line
-                writeWord(tokens.get(0).s, tokens.get(0).dim, wordSpacing);
-                tokens.remove(0);
-            } else {
-                // justify
-                var combinedTextWidth = (float)
-                    tokens.subList(0, count)
-                          .stream()
-                          .mapToDouble(it->it.dim.getX())
-                          .sum();
+            while(tokens.size() > 0) {
+                float leftEdge  = prevRect.x + prevRect.w;
+                float rightEdge = rect.x + rect.w;
+                int count       = countWordsUntilEOL(tokens, rightEdge - leftEdge);
 
-                var wordSpacing = ((rightEdge-leftEdge)-combinedTextWidth) / (count-1);
+                //log("para: count=%s token[0]=%s", count, tokens[0][0]);
 
-                tokens.subList(0, count).forEach(it->writeWord(it.s, it.dim, wordSpacing));
+                if(count==0 && tokens.get(0).dim.getX() > rect.w) {
+                    // this word is too big for the rect width. just print it
+                    count = 1;
+                }
 
-                tokens = tokens.subList(count, tokens.size());
+                if(count==0) {
+                    // no words fit on this line. go to the next line
+                    newLine();
+                } else if(count==1) {
+                    // 1 word fits on this line
+                    writeWord(tokens.get(0).s, tokens.get(0).dim, wordSpacing);
+                    tokens.remove(0);
+                } else {
+                    // justify
+                    var combinedTextWidth = (float)
+                        tokens.subList(0, count)
+                              .stream()
+                              .mapToDouble(it->it.dim.getX())
+                              .sum();
+
+                    var wordSpacing = ((rightEdge-leftEdge)-combinedTextWidth) / (count-1);
+
+                    tokens.subList(0, count).forEach(it->writeWord(it.s, it.dim, wordSpacing));
+
+                    tokens = tokens.subList(count, tokens.size());
+                }
             }
-        }
+        });
+
         return this;
     }
     public ParagraphTextRenderer clear() {
@@ -137,6 +146,15 @@ final public class ParagraphTextRenderer {
     //======================================================================
     private void reset() {
         prevRect = new Rect<>((float)rect.x, (float)rect.y, 0f,0f);
+    }
+    private void handleNewLines(String str, Lambda.AV<String> lambda) {
+        var lines = str.split("\n");
+        for(int i=0; i<lines.length; i++) {
+            lambda.call(lines[i]);
+            if(i+1<lines.length) {
+                newLine();
+            }
+        }
     }
     private int countWordsUntilEOL(List<Token> tokens, float remainingWidth) {
         int count = 0;
