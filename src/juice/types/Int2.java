@@ -60,7 +60,6 @@ final public class Int2 {
         return new Int2(x/p.x, y/p.y);
     }
 
-
     @Override public int hashCode() {
         return Integer.hashCode(x) ^ Integer.hashCode(y);
     }

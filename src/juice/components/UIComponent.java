@@ -1,8 +1,8 @@
 package juice.components;
 
 import juice.Frame;
-import juice.Lambda;
 import juice.types.Int2;
+import juice.types.Rect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,15 +67,8 @@ public class UIComponent {
             children.add(child);
         }
     }
-    public int countChildren(Lambda.AR<UIComponent,Boolean> f) {
-        return (int)children.stream().filter(f::call).count();
-    }
     public boolean enclosesPoint(Int2 p) {
-        var pos    = getAbsPos();
-        var extent = pos.add(getSize());
-        return p.getX() >= pos.getX()   && p.getY() >= pos.getY() &&
-               p.getX() < extent.getX() && p.getY() < extent.getY();
-
+        return Rect.of(getAbsPos(), getSize()).contains(p);
     }
     public Stage getStage() {
         if(this instanceof Stage) return (Stage)this;
