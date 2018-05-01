@@ -17,6 +17,7 @@ final public class MenuItem extends UIComponent {
     public Menu getMenu() { return (Menu)getParent(); }
     public MenuBar getBar() { return getMenu().getBar(); }
     public int getIndex() { return index; }
+    public boolean isEnabled() { return enabled; }
 
     public MenuItem(String label, Lambda.V callback) {
         this.label = label;
