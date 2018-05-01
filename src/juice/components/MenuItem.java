@@ -51,9 +51,11 @@ final public class MenuItem extends UIComponent {
 
             for(var e : events) {
                 if(e.type==Mouse.EventType.BUTTON_PRESS) {
+                    frame.consume(e);
                     getMenu().getText().replaceColour(index+1, RGBA.WHITE.gamma(0.6f));
                     callback.call();
                 } else if(e.type==Mouse.EventType.BUTTON_RELEASE) {
+                    frame.consume(e);
                     getMenu().closeMenu();
                 }
             }

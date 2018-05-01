@@ -50,8 +50,9 @@ public class UIComponent {
      * rendered first and updated last.
      */
     public void moveToBack(UIComponent child) {
-        var found = children.remove(child);
-        if(found) {
+        var i = children.indexOf(child);
+        if(i > 0) {
+            children.remove(i);
             children.add(0, child);
         }
     }
@@ -60,8 +61,9 @@ public class UIComponent {
      * rendered last and updated first.
      */
     public void moveToFront(UIComponent child) {
-        var found = children.remove(child);
-        if(found) {
+        var i = children.indexOf(child);
+        if(i!=-1 && i!=children.size()-1) {
+            children.remove(i);
             children.add(child);
         }
     }

@@ -43,6 +43,13 @@ final public class Menu extends UIComponent {
     public MenuItem getItem(int index) {
         return items.get(index);
     }
+    public MenuItem getItem(String prefix) {
+        String s = prefix.toLowerCase();
+        return items.stream()
+                    .filter(it->it.getLabel().toLowerCase().startsWith(s))
+                    .findFirst()
+                    .orElse(null);
+    }
 
     public MenuBar getBar() {
         var p = getParent();
