@@ -35,6 +35,8 @@ final public class Window {
     private Stage stage;
     private Props props = new Props();
     private MouseState mouseState = new MouseState();
+    private boolean closingDown = false;
+    private Lambda.V windowCloseCallback;
     //====================================================================
     public static final class Props {
         public boolean windowed  = true;
@@ -115,6 +117,9 @@ final public class Window {
     }
     public void setClearColour(RGBA c) {
         glClearColor(c.r, c.g, c.b, c.a);
+    }
+    public void setWindowCloseCallback(Lambda.V callback) {
+        this.windowCloseCallback = callback;
     }
     //====================================================================
     /**
@@ -258,6 +263,13 @@ final public class Window {
 
             mouseEvents.add(Mouse.Event.wheel((int)yoffset, mouseState.pos));
         });
+        glfwSetWindowCloseCallback(window, window1 -> {
+            if(windowCloseCallback!=null) {
+                windowCloseCallback.call();
+            } else {
+                close();
+            }
+        });
 
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glViewport(0, 0, props.width, props.height);
@@ -271,7 +283,8 @@ final public class Window {
         stage.setSize(getWindowSize());
     }
     public void close() {
-        glfwSetWindowShouldClose(window, true);
+        closingDown = true;
+        //glfwSetWindowShouldClose(window, true);
     }
     public void destroy() {
         stage.destroy();
@@ -292,7 +305,7 @@ final public class Window {
         var frame               = new Frame();
         frame.window = this;
 
-        while(!glfwWindowShouldClose(window)) {
+        while(!closingDown) {
 
             frame.number = frameNumber;
             frame.nsecs  = System.nanoTime()-startTimestamp;
