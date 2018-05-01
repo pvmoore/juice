@@ -100,24 +100,32 @@ final public class TextRenderer {
     }
     public TextRenderer replaceText(int index, String text) {
         var ch = chunks.get(index);
+        if(ch.text.equals(text)) return this;
+
         ch.text = text;
         textChanged = true;
         return this;
     }
     public TextRenderer replacePos(int index, Int2 pos) {
         var ch = chunks.get(index);
+        if(ch.pos.equals(pos)) return this;
+
         ch.pos = pos;
         textChanged = true;
         return this;
     }
     public TextRenderer replaceColour(int index, RGBA colour) {
         var ch = chunks.get(index);
+        if(ch.colour.equals(colour)) return this;
+
         ch.colour = colour;
         textChanged = true;
         return this;
     }
     public TextRenderer replaceSize(int index, float size) {
         var ch = chunks.get(index);
+        if(ch.size==size) return this;
+
         ch.size = size;
         textChanged = true;
         return this;

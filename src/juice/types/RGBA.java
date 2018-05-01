@@ -2,6 +2,8 @@ package juice.types;
 
 import org.joml.Vector4f;
 
+import java.util.Arrays;
+
 final public class RGBA {
     public static final RGBA BLACK  = new RGBA(0,0,0,1);
     public static final RGBA WHITE  = new RGBA(1,1,1,1);
@@ -41,7 +43,13 @@ final public class RGBA {
     public Vector4f toVector4f() {
         return new Vector4f(r,g,b,a);
     }
-
+    @Override public int hashCode() {
+        return Arrays.hashCode(new float[]{r,g,b,a});
+    }
+    @Override public boolean equals(Object obj) {
+        RGBA o = (RGBA)obj;
+        return r==o.r && g==o.g && b==o.b && a==o.a;
+    }
     @Override public String toString() {
         return String.format("[%.2f, %.2f, %.2f, %.2f]", r,g,b,a);
     }

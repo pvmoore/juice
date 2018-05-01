@@ -80,12 +80,16 @@ final public class RoundRectangleRenderer {
     }
     public RoundRectangleRenderer setRectanglePos(int index, Int2 pos) {
         var r = rectangles.get(index);
+        if(r.pos.equals(pos)) return this;
+
         r.pos = pos;
         verticesChanged = true;
         return this;
     }
     public RoundRectangleRenderer setRectangleSize(int index, Int2 size) {
         var r = rectangles.get(index);
+        if(r.size.equals(size)) return this;
+
         r.size = size;
         verticesChanged = true;
         return this;
