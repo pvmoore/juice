@@ -1,6 +1,5 @@
-package juice.renderers;
+package juice.graphics;
 
-import juice.Font;
 import juice.Lambda;
 import juice.types.Float2;
 import juice.types.Int2;

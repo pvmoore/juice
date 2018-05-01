@@ -2,6 +2,8 @@ package juice;
 
 import juice.components.Stage;
 import juice.components.UIComponent;
+import juice.graphics.Font;
+import juice.graphics.Texture;
 import juice.types.Int2;
 import juice.types.RGBA;
 import org.lwjgl.BufferUtils;

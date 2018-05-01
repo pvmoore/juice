@@ -1,9 +1,5 @@
-package juice.renderers;
+package juice.graphics;
 
-import juice.GLShaderProgram;
-import juice.Texture;
-import juice.VAO;
-import juice.VBO;
 import juice.types.RGBA;
 import juice.types.Rect;
 import org.joml.Matrix4f;

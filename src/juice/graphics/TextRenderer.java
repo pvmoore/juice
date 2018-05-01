@@ -1,9 +1,5 @@
-package juice.renderers;
+package juice.graphics;
 
-import juice.Font;
-import juice.GLShaderProgram;
-import juice.VAO;
-import juice.VBO;
 import juice.types.Float2;
 import juice.types.Int2;
 import juice.types.RGBA;

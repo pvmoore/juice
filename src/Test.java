@@ -1,11 +1,7 @@
-import juice.Font;
 import juice.Frame;
-import juice.Texture;
 import juice.Window;
 import juice.components.*;
-import juice.renderers.ParagraphTextRenderer;
-import juice.renderers.RectangleRenderer;
-import juice.renderers.RoundRectangleRenderer;
+import juice.graphics.*;
 import juice.types.Int2;
 import juice.types.RGBA;
 

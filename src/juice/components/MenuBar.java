@@ -1,8 +1,8 @@
 package juice.components;
 
-import juice.Font;
 import juice.Frame;
-import juice.renderers.RoundRectangleRenderer;
+import juice.graphics.Font;
+import juice.graphics.RoundRectangleRenderer;
 import juice.types.Int2;
 import juice.types.RGBA;
 

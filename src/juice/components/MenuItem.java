@@ -3,7 +3,7 @@ package juice.components;
 import juice.Frame;
 import juice.Lambda;
 import juice.Mouse;
-import juice.renderers.TextRenderer;
+import juice.graphics.TextRenderer;
 import juice.types.RGBA;
 
 final public class MenuItem extends UIComponent {

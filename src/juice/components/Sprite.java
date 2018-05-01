@@ -1,6 +1,10 @@
 package juice.components;
 
-import juice.*;
+import juice.Frame;
+import juice.graphics.GLShaderProgram;
+import juice.graphics.Texture;
+import juice.graphics.VAO;
+import juice.graphics.VBO;
 import juice.types.RGBA;
 import org.joml.Matrix4f;
 
