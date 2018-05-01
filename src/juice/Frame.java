@@ -14,6 +14,15 @@ final public class Frame {
 
     /**package*/ List<Mouse.Event> mouseEvents = new ArrayList<>();
 
+    public List<Mouse.Event> getGlobalMouseEvents() {
+        return new ArrayList<>(mouseEvents);
+    }
+    public List<Mouse.Event> getGlobalMouseEvents(Mouse.EventType type) {
+        return mouseEvents.stream()
+                          .filter(it->it.type==type)
+                          .collect(Collectors.toUnmodifiableList());
+    }
+
     public List<Mouse.Event> getLocalMouseEvents(UIComponent forComponent) {
         return mouseEvents.stream()
                           .filter(it->forComponent.enclosesPoint(it.pos))
@@ -24,5 +33,8 @@ final public class Frame {
                           .filter(it->forComponent.enclosesPoint(it.pos))
                           .filter(it->it.type==type)
                           .collect(Collectors.toList());
+    }
+    public void consume(Mouse.Event e) {
+        mouseEvents.removeIf(it->it==e);
     }
 }

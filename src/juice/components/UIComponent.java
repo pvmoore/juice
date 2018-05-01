@@ -21,24 +21,49 @@ public class UIComponent {
     public Int2 getRelPos() {
         return pos;
     }
-    public void setRelPos(Int2 p) {
+    public UIComponent setRelPos(Int2 p) {
         boolean changed = p!=pos;
         pos = p;
         if(changed) onMoved();
+        return this;
     }
     public Int2 getSize() {
         return size;
     }
-    public void setSize(Int2 s) {
+    public UIComponent setSize(Int2 s) {
         boolean changed = s!=size;
         size = s;
         if(changed) onResized();
+        return this;
     }
     public UIComponent getParent() {
         return parent;
     }
     public List<UIComponent> getChildren() {
         return children;
+    }
+    public int indexOf(UIComponent child) {
+        return children.indexOf(child);
+    }
+    /**
+     * Move child to start of children list so that it will be
+     * rendered first and updated last.
+     */
+    public void moveToBack(UIComponent child) {
+        var found = children.remove(child);
+        if(found) {
+            children.add(0, child);
+        }
+    }
+    /**
+     * Move child to end of children list so that it will be
+     * rendered last and updated first.
+     */
+    public void moveToFront(UIComponent child) {
+        var found = children.remove(child);
+        if(found) {
+            children.add(child);
+        }
     }
     public int countChildren(Lambda.AR<UIComponent,Boolean> f) {
         return (int)children.stream().filter(f::call).count();
@@ -154,8 +179,10 @@ public class UIComponent {
     }
     protected void fireUpdate(Frame frame) {
         update(frame);
-        for(var c : children) {
-            c.fireUpdate(frame);
+
+        // Update children in reverse order
+        for(int i = children.size()-1; i>=0; i--) {
+            children.get(i).fireUpdate(frame);
         }
     }
     protected void fireRender(Frame frame) {

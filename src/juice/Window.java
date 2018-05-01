@@ -34,7 +34,6 @@ final public class Window {
     private Set<Integer> keys = new HashSet<>();
     private Stage stage;
     private Props props = new Props();
-    private MouseState mouseState = new MouseState();
     private boolean closingDown = false;
     private Lambda.V windowCloseCallback;
     //====================================================================
@@ -47,28 +46,6 @@ final public class Window {
         public String textureDir = "./";
         public String fontDir    = "./";
     }
-    public final class MouseDrag {
-        public boolean dragging = false;
-        public int button       = 0;
-        public Int2 start       = Int2.ZERO;
-        public Int2 end         = Int2.ZERO;
-
-        private void update(int button) {
-            Int2 pos = mouseState.pos;
-            if(mouseState.drag.dragging) {
-                if(!mouseState.button[mouseState.drag.button]) {
-                    mouseState.drag.dragging = false;
-                    mouseState.drag.end = pos;
-                }
-            } else { // not currently dragging
-                if(mouseState.button[button]) {
-                    mouseState.drag.dragging = true;
-                    mouseState.drag.start = pos;
-                    mouseState.drag.button = button;
-                }
-            }
-        }
-    };
     public static final class Modifier {
         public boolean SHIFT = false;
         public boolean CTRL  = false;
@@ -80,21 +57,11 @@ final public class Window {
             ALT   = (value & GLFW_MOD_ALT) != 0;
         }
     }
-    public final class MouseState {
-        public Int2 pos          = Int2.ZERO;
-        public boolean[] button = new boolean[3];
-        public MouseDrag drag   = new MouseDrag();
-        public Modifier mods    = new Modifier();
-        public int wheelDelta   = 0;
-
-        public void resetWheelDelta() { wheelDelta = 0; }
-        public void resetDragStart() { drag.start = pos; }
-    }
+    private Int2 mousePos = Int2.ZERO;
     private List<Mouse.Event> mouseEvents = new ArrayList<>();
     //====================================================================
     public UIComponent getStage() { return stage; }
-    public MouseState getMouseState() { return mouseState; }
-    public Int2 getMousePos() { return mouseState.pos; }
+    public Int2 getMousePos() { return mousePos; }
 
     public void show(boolean show) {
         if(show) glfwShowWindow(window);
@@ -231,37 +198,23 @@ final public class Window {
             }
         });
         glfwSetMouseButtonCallback(window, (window1, button, action, mods) -> {
-            mouseState.button[button] = (action == GLFW_PRESS);
-            mouseState.mods.apply(mods);
-
-            mouseState.drag.update(button);
 
             var m = new Modifier();
             m.apply(mods);
 
             if(action==GLFW_PRESS) {
-                mouseEvents.add(Mouse.Event.button(button, true, m, mouseState.pos));
+                mouseEvents.add(Mouse.Event.button(button, true, m, mousePos));
             } else if(action==GLFW_RELEASE) {
-                mouseEvents.add(Mouse.Event.button(button, false, m, mouseState.pos));
+                mouseEvents.add(Mouse.Event.button(button, false, m, mousePos));
             }
-
-            //stage.mouseButton(button, mouseState);
         });
         glfwSetCursorPosCallback(window, (window1, xpos, ypos) -> {
-            mouseState.pos = new Int2((int)xpos, (int)ypos);
+            mousePos = new Int2((int)xpos, (int)ypos);
 
-            mouseState.drag.update(0);
-            mouseState.drag.update(1);
-            mouseState.drag.update(2);
-
-            mouseEvents.add(Mouse.Event.move(new Int2((int)xpos, (int)ypos)));
-
-            //stage.mouseMoved(mouseState);
+            mouseEvents.add(Mouse.Event.move(mousePos));
         });
         glfwSetScrollCallback(window, (window1, xoffset, yoffset) -> {
-            mouseState.wheelDelta = (int)yoffset;
-
-            mouseEvents.add(Mouse.Event.wheel((int)yoffset, mouseState.pos));
+            mouseEvents.add(Mouse.Event.wheel((int)yoffset, mousePos));
         });
         glfwSetWindowCloseCallback(window, window1 -> {
             if(windowCloseCallback!=null) {

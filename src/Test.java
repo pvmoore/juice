@@ -50,28 +50,62 @@ public class Test {
     }
     //======================================================================
     class MainComponent extends UIComponent {
-        private Sprite sprite;
+        private Sprite sprite, draggableSprite;
         private RectangleRenderer rectangles;
         private RoundRectangleRenderer roundRectangles;
         private ParagraphTextRenderer paraText;
 
-        MainComponent() {
+        final class DraggableSprite extends Sprite implements DragComponent.Listener {
+            DragComponent dragComponent;
 
+            DraggableSprite() {
+                dragComponent = new DragComponent(this);
+            }
+
+            @Override public void update(Frame frame) {
+                dragComponent.update(frame);
+
+                super.update(frame);
+            }
+
+            @Override public UIComponent getComponent() { return this; }
+
+            @Override public void onDragMoved(Int2 delta) {
+
+            }
+            @Override public void onDragDropped(Int2 delta) {
+                System.out.println("Dropped "+delta);
+            }
         }
+
         @Override public void onAddedToStage() {
             createSprite();
+            createDraggableSprite();
             createRectangles();
             createMenu();
             createText();
+
+            // Move this to the front so that it is displayed on top of everything else
+            // and also so that the drag events do not interfere with components below it
+            moveToFront(draggableSprite);
         }
         void createSprite() {
-            // Large sprite
             this.sprite = new Sprite()
                 .setVP(getStage().getCamera().VP())
                 .setTexture(Texture.get("bishop-256.png", Texture.standardAttribs));
             sprite.setSize(new Int2(256,256));
             sprite.setRelPos(new Int2(10,100));
             add(sprite);
+        }
+        void createDraggableSprite() {
+            this.draggableSprite = (Sprite)new DraggableSprite()
+                .setVP(getStage().getCamera().VP())
+                .setTexture(Texture.get("bishop-256.png", Texture.standardAttribs))
+                .setColour(new RGBA(0xffa020))
+                .setSize(new Int2(128,128))
+                .setRelPos(new Int2(300,300));
+
+            add(draggableSprite);
         }
         void createRectangles() {
             // A rectangle

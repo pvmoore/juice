@@ -117,9 +117,9 @@ final public class Menu extends UIComponent {
 
         var events = frame.getLocalMouseEvents(this);
 
-        if(enclosesPoint(frame.window.getMousePos())) {
+        if(!events.isEmpty()) {
             if(!isOpen) openMenu();
-        } else {
+        } else if(!enclosesPoint(frame.window.getMousePos())) {
             if(isOpen) closeMenu();
         }
     }

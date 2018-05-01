@@ -36,9 +36,14 @@ final public class Stage extends UIComponent {
 
         animations.update(frame.delta);
 
-        for(var c : getChildren()) {
-            c.fireUpdate(frame);
+        // Update children in reverse order
+        var children = getChildren();
+        for(int i = children.size()-1; i>=0; i--) {
+            children.get(i).fireUpdate(frame);
         }
+//        for(var c : getChildren()) {
+//            c.fireUpdate(frame);
+//        }
 
         if(!afterUpdateHooks.isEmpty()) {
             afterUpdateHooks.forEach(Hook::call);

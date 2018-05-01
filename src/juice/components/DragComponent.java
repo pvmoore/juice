@@ -1,59 +1,92 @@
 package juice.components;
 
 import juice.Frame;
+import juice.Mouse;
 import juice.types.Int2;
 /**
  * Handle UIComponent mouse dragging.
  */
 final public class DragComponent {
     private Listener listener;
+
     private Int2 lastDragPos = Int2.ZERO;
     private boolean currentlyDragging = false;
     private boolean moved = false;
     private boolean isEnabled = true;
 
+    private UIComponent component;
+    private Int2 absDragStart, relDragStart;
+    private int button = -1;
+
     public interface Listener {
-        default void onDragMoved(Int2 start, Int2 delta) {}
+        UIComponent getComponent();
+        /** @param delta Delta from drag start */
+        default void onDragMoved(Int2 delta) {}
+        /** @param delta Delta from drag start */
         default void onDragDropped(Int2 delta) {}
     }
 
     public DragComponent(Listener listener) {
-        this.listener = listener;
+        this.listener  = listener;
+        this.component = listener.getComponent();
     }
     public void enable() {
         isEnabled = true;
     }
     public void disable() {
         isEnabled = false;
+        reset();
     }
     public void update(Frame frame) {
-        if(!isEnabled) {
-            return;
-        }
-        var state       = frame.window.getMouseState();
-        var nowDragging = state.drag.dragging;
+        if(!isEnabled) return;
 
-        if(currentlyDragging) {
-            if(lastDragPos != state.pos) {
-                lastDragPos = state.pos;
-                listener.onDragMoved(state.drag.start, state.pos.sub(state.drag.start));
-                moved = true;
-            }
-            if(!nowDragging) {
-                if(moved) {
-                    // Only inform the listener if anything was actually dragged
-                    listener.onDragDropped(lastDragPos.sub(state.drag.start));
+        // Process all events
+        for(var e : frame.getGlobalMouseEvents()) {
+
+            var pos = e.pos;
+
+            if(currentlyDragging) {
+                boolean isRelease = e.type==Mouse.EventType.BUTTON_RELEASE &&
+                                    e.button==button;
+                var delta         = pos.sub(absDragStart);
+
+                if(lastDragPos != pos) {
+                    lastDragPos = pos;
+
+                    component.setRelPos(relDragStart.add(delta));
+                    listener.onDragMoved(delta);
+                    moved = true;
                 }
-                lastDragPos = Int2.ZERO;
-                currentlyDragging = false;
-                moved = false;
-            }
-        } else if(nowDragging) {
-            var ui = (UIComponent)listener;
-            if(ui.enclosesPoint(state.drag.start)) {
-                currentlyDragging = true;
-                lastDragPos       = state.drag.start;
+                if(isRelease) {
+                    if(moved) {
+                        // Only inform the listener if anything was actually dragged
+                        listener.onDragDropped(delta);
+                    }
+                    reset();
+                }
+                frame.consume(e);
+            } else {
+                boolean isLocal = component.enclosesPoint(e.pos);
+                boolean isPress = e.type==Mouse.EventType.BUTTON_PRESS;
+
+                if(isPress && isLocal) {
+                    currentlyDragging = true;
+                    button            = e.button;
+                    lastDragPos       = pos;
+                    absDragStart      = pos;
+                    relDragStart      = component.getRelPos();
+
+                    frame.consume(e);
+                }
             }
         }
     }
+    //=========================================================
+    private void reset() {
+        lastDragPos       = Int2.ZERO;
+        currentlyDragging = false;
+        moved             = false;
+        button            = -1;
+    }
 }
+
