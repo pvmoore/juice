@@ -39,8 +39,9 @@ public class UIComponent {
     public UIComponent getParent() {
         return parent;
     }
+    /** Return a shallow copy. */
     public List<UIComponent> getChildren() {
-        return children;
+        return new ArrayList<>(children);
     }
     public int indexOf(UIComponent child) {
         return children.indexOf(child);
