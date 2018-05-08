@@ -224,41 +224,41 @@ final public class RoundRectangleRenderer {
             "";
     private static final String FS =
         "#version 330 core\n" +
-            "" +
-            "    in VS_OUT {" +
-            "        vec2 pixelPos;" +
-            "        flat vec2 rectPos;" +
-            "        flat vec2 rectSize;" +
-            "        vec4 colour;" +
-            "        float radius;" +
-            "    } fs_in;" +
-            "" +
-            "    out vec4 color;" +
-            "" +
-            "    void main() {" +
+            "\n" +
+            "    in VS_OUT {\n" +
+            "        vec2 pixelPos;\n" +
+            "        flat vec2 rectPos;\n" +
+            "        flat vec2 rectSize;\n" +
+            "        vec4 colour;\n" +
+            "        float radius;\n" +
+            "    } fs_in;\n" +
+            "\n" +
+            "    out vec4 color;\n" +
+            "\n" +
+            "    void main() {\n" +
             "        // assuming an axis-aligned rectangle\n" +
-            "        vec2 pos  = fs_in.pixelPos-fs_in.rectPos;" +
-            "        vec2 size = fs_in.rectSize;" +
-            "        vec2 mid  = size/2;" +
-            "" +
-            "        vec2 top    = fs_in.radius.xx;" +
-            "        float alpha = fs_in.colour.a;" +
-            "" +
-            "        if(pos.x>mid.x) {" +
-            "            pos.x = size.x-pos.x;" +
-            "        }" +
-            "        if(pos.y>mid.y) {" +
-            "            pos.y = size.y-pos.y;" +
-            "        }" +
-            "" +
-            "        float dfc = distance(pos, top);" +
-            "" +
-            "        if(pos.x<fs_in.radius && pos.y<fs_in.radius) {" +
+            "        vec2 pos  = fs_in.pixelPos-fs_in.rectPos;\n" +
+            "        vec2 size = fs_in.rectSize;\n" +
+            "        vec2 mid  = size/2;\n" +
+            "\n" +
+            "        vec2 top    = vec2(fs_in.radius,fs_in.radius);\n" +
+            "        float alpha = fs_in.colour.a;\n" +
+            "\n" +
+            "        if(pos.x>mid.x) {\n" +
+            "            pos.x = size.x-pos.x;\n" +
+            "        }\n" +
+            "        if(pos.y>mid.y) {\n" +
+            "            pos.y = size.y-pos.y;\n" +
+            "        }\n" +
+            "\n" +
+            "        float dfc = distance(pos, top);\n" +
+            "\n" +
+            "        if(pos.x<fs_in.radius && pos.y<fs_in.radius) {\n" +
             "            // we are in a corner\n" +
-            "            float v = fs_in.radius-dfc;" +
-            "            alpha   = clamp(v, 0, alpha);" +
-            "        }" +
-            "" +
-            "        color = vec4(fs_in.colour.rgb, alpha);" +
+            "            float v = fs_in.radius-dfc;\n" +
+            "            alpha   = clamp(v, 0, alpha);\n" +
+            "        }\n" +
+            "\n" +
+            "        color = vec4(fs_in.colour.rgb, alpha);\n" +
             "    }";
 }
